@@ -5,7 +5,6 @@ local.settings.*
 .DS_Store
 
 # vs code
-.vscode
 
 ################################
 # SCALA
@@ -27,7 +26,6 @@ project/metals.sbt
 .metals
 
 # vs code
-.vscode
 
 # scala 3
 .tasty

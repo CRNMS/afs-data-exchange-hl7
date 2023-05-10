@@ -1,0 +1,9 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "azureFunctions.javaBuildTool": "maven",
+    "azureFunctions.deploySubpath": "mrr/target/azure-functions/ocio-ede-${environment-id}-hl7-cache-loader",
+    "azureFunctions.projectLanguage": "Java",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "package (functions)"
+}
