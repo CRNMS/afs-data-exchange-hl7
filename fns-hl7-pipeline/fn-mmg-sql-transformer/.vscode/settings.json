@@ -1,8 +1,9 @@
 {
     "azureFunctions.javaBuildTool": "maven",
-    "azureFunctions.deploySubpath": "target/azure-functions/ocio-ede-${environment-id}-hl7-mmg-sql-transformer",
+    "azureFunctions.deploySubpath": "target/azure-functions/cfn-hl7-mmg-sql-transformer",
     "azureFunctions.projectLanguage": "Java",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "package (functions)"
+    "azureFunctions.preDeployTask": "package (functions)",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

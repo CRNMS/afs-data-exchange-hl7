@@ -39,7 +39,7 @@ class Function {
     } // .companion object
 
 
-    @FunctionName("MMG_BASED_SQL_TRANSFORMER")
+    @FunctionName("mmg_based_sql_transformer")
     fun eventHubProcessor(
         @EventHubTrigger(
                 name = "msg", 

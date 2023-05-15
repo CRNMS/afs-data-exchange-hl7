@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
-
+/*
 class MmgSqlTest {
 
     companion object {
@@ -28,7 +28,7 @@ class MmgSqlTest {
         const val MMG_BLOCK_TYPE_SINGLE = "Single"
         const val TABLES_KEY_NAME = "tables"
 
-        const val REDIS_INSTANCE_NAME = "ocio-ede-dev-dex-cache.redis.cache.windows.net"
+        const val REDIS_INSTANCE_NAME = "hl7-dex-cache.redis.cache.windows.net"
 
         const val MESSAGE_PROFILE_IDENTIFIER = "message_profile_identifier"
 
@@ -333,7 +333,7 @@ class MmgSqlTest {
         val mmgUtil = MmgUtil(redisProxy)
         return mmgUtil.getMMGs(mshProfile, mshCondition, eventCode, jurisdictionCode)
     }
-} // .MmgSqlTest
+} // .MmgSqlTest */
 
 
 

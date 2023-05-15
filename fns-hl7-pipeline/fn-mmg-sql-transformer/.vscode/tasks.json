@@ -8,7 +8,7 @@
 			"problemMatcher": "$func-java-watch",
 			"isBackground": true,
 			"options": {
-				"cwd": "${workspaceFolder}/target/azure-functions/ocio-ede-${environment-id}-hl7-mmg-sql-transformer"
+				"cwd": "${workspaceFolder}/target/azure-functions/cfn-hl7-mmg-sql-transformer"
 			},
 			"dependsOn": "package (functions)"
 		},

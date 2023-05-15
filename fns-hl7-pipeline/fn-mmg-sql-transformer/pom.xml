@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>gov.cdc.dataexchange</groupId>
-    <artifactId>mmg-sql-transformer</artifactId>
+    <groupId>cfn-hl7-mmg-sql-transformer</groupId>
+    <artifactId>cfn-hl7-mmg-sql-transformer</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -13,17 +13,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.7.20</kotlin.version>
-        <functions.version>2.1.0</functions.version>
-        <functions.plugin.version>1.16.0</functions.plugin.version>
+        <kotlin.version>1.8.0</kotlin.version>
+        <functions.version>3.0.0</functions.version>
+        <functions.plugin.version>1.19.0</functions.plugin.version>
         <maven.compiler.source>1.11</maven.compiler.source>
         <maven.compiler.target>1.11</maven.compiler.target>
-
-        <functionAppName>ocio-ede-${environment-id}-hl7-mmg-sql-transformer</functionAppName>
-        <stagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</stagingDirectory>
+		<java.version>11</java.version>
+        <functionResourceGroup>cdc-modernization-dex</functionResourceGroup>
+        <functionAppName>cfn-hl7-mmg-sql-transformer</functionAppName>
+        <stagingDirectory>${project.build.directory}/azure-functions/cfn-hl7-mmg-sql-transformer</stagingDirectory>
 
         <slf4j.version>2.0.3</slf4j.version>
-        <azevhub.version>5.13.1</azevhub.version>
+        <azevhub.version>5.15.0</azevhub.version>
         <azstblob.version>12.19.1</azstblob.version>
         <gson.version>2.9.1</gson.version>
         <redis.version>4.2.3</redis.version>
@@ -34,17 +35,28 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>gov.cdc.dex</groupId>
-            <artifactId>lib-dex-commons</artifactId>
-            <version>${libdexcommon.version}</version>
-        </dependency>
         
         <!-- Azure Functions Java Library -->
         <dependency>
             <groupId>com.microsoft.azure.functions</groupId>
             <artifactId>azure-functions-java-library</artifactId>
             <version>${functions.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>gov.cdc.dex</groupId>
+            <artifactId>lib-dex-commons</artifactId>
+            <version>${libdexcommon.version}</version>
+            <scope>system</scope>
+            <systemPath>C:\Users\b-sebastian.clavijo\Documents\Work\AFS Project\afs-data-exchange-hl7\libs\lib-dex-commons-1.0.12-SNAPSHOT.jar</systemPath>
+        </dependency>
+        
+         <dependency>
+            <groupId>gov.cdc.hl7</groupId>
+            <artifactId>hl7-pet_2.13</artifactId>
+            <version>${hl7pet.version}</version>
+            <scope>system</scope>
+            <systemPath>C:\Users\b-sebastian.clavijo\Documents\Work\AFS Project\afs-data-exchange-hl7\libs\hl7-pet_2.13-1.2.7.2.jar</systemPath>
         </dependency>
 
         <!-- Kotlin -->
@@ -75,7 +87,6 @@
             <version>${gson.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
@@ -100,11 +111,13 @@
             <artifactId>jedis</artifactId>
             <version>${redis.version}</version>
         </dependency>
+       
+        <!-- Added Scala -->
         <dependency>
-            <groupId>gov.cdc.hl7</groupId>
-            <artifactId>hl7-pet_2.13</artifactId>
-            <version>${hl7pet.version}</version>
-          </dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.10</version>
+        </dependency>
 
     </dependencies>
 
@@ -113,44 +126,27 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
         <!-- Plugins Dependencies Versions -->
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.microsoft.azure</groupId>
-                    <artifactId>azure-functions-maven-plugin</artifactId>
-                    <version>${functions.plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <artifactId>kotlin-maven-plugin</artifactId>
-                    <version>${kotlin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
+       <plugins>
             <plugin>
                 <groupId>com.microsoft.azure</groupId>
                 <artifactId>azure-functions-maven-plugin</artifactId>
+                <version>1.19.0</version>
                 <configuration>
-                    <resourceGroup>${functionResourceGroup}</resourceGroup>
+                    <auth>
+                        <type>service_principal</type>
+                        <serverId>azure-sp-tst</serverId>
+                    </auth>
+                    <!-- function app name -->
                     <appName>${functionAppName}</appName>
+                    <!-- function app resource group -->
+                    <resourceGroup>${functionResourceGroup}</resourceGroup>
+                    <!-- function app service plan name -->
+                    <appServicePlanName>${functionServicePlan}</appServicePlanName>
+                    <!-- function app region-->
+                    <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-regions for all valid values -->
                     <region>${functionRegion}</region>
+                    <subscriptionId>${subscriptionID}</subscriptionId>
+
                     <appSettings>
                         <!-- Run Azure Function from package file by default -->
                         <property>
@@ -255,17 +251,38 @@
                     </filesets>
                 </configuration>
             </plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
-                        <REDIS_CACHE_NAME>ocio-ede-${environment-id}-dex-cache.redis.cache.windows.net</REDIS_CACHE_NAME>
-                        <REDIS_CACHE_KEY>${redisDevKey}</REDIS_CACHE_KEY>
+                        <REDIS_CACHE_NAME>hl7-dex-cache.redis.cache.windows.net</REDIS_CACHE_NAME>
+                        <REDIS_CACHE_KEY>lM8rZfEmYOFzbUuJnYnJtq8FQMFaShqITAzCaHbwl9s=</REDIS_CACHE_KEY>
                     </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
+        
+        
     </build>
 
     
