@@ -5,5 +5,7 @@
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "package (functions)",
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "python.envFile": "${workspaceFolder}\\.databricks\\.databricks.env",
+    "databricks.python.envFile": "${workspaceFolder}/.env"
 }

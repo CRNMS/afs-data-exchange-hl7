@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cfn-hl7-mmg-sql-transformer</groupId>
-    <artifactId>cfn-hl7-mmg-sql-transformer</artifactId>
+    <groupId>fn-hl7-mmg-sql-transformer</groupId>
+    <artifactId>fn-hl7-mmg-sql-transformer</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -20,8 +20,8 @@
         <maven.compiler.target>1.11</maven.compiler.target>
 		<java.version>11</java.version>
         <functionResourceGroup>cdc-modernization-dex</functionResourceGroup>
-        <functionAppName>cfn-hl7-mmg-sql-transformer</functionAppName>
-        <stagingDirectory>${project.build.directory}/azure-functions/cfn-hl7-mmg-sql-transformer</stagingDirectory>
+        <functionAppName>fn-hl7-mmg-sql-transformer</functionAppName>
+        <stagingDirectory>${project.build.directory}/azure-functions/fn-hl7-mmg-sql-transformer</stagingDirectory>
 
         <slf4j.version>2.0.3</slf4j.version>
         <azevhub.version>5.15.0</azevhub.version>
@@ -47,11 +47,13 @@
             <groupId>gov.cdc.dex</groupId>
             <artifactId>lib-dex-commons</artifactId>
             <version>${libdexcommon.version}</version>
+            <!--
             <scope>system</scope>
             <systemPath>C:\Users\b-sebastian.clavijo\Documents\Work\AFS Project\afs-data-exchange-hl7\libs\lib-dex-commons-1.0.12-SNAPSHOT.jar</systemPath>
+            -->
         </dependency>
         
-         <dependency>
+        <dependency>
             <groupId>gov.cdc.hl7</groupId>
             <artifactId>hl7-pet_2.13</artifactId>
             <version>${hl7pet.version}</version>
@@ -130,23 +132,10 @@
             <plugin>
                 <groupId>com.microsoft.azure</groupId>
                 <artifactId>azure-functions-maven-plugin</artifactId>
-                <version>1.19.0</version>
                 <configuration>
-                    <auth>
-                        <type>service_principal</type>
-                        <serverId>azure-sp-tst</serverId>
-                    </auth>
-                    <!-- function app name -->
-                    <appName>${functionAppName}</appName>
-                    <!-- function app resource group -->
                     <resourceGroup>${functionResourceGroup}</resourceGroup>
-                    <!-- function app service plan name -->
-                    <appServicePlanName>${functionServicePlan}</appServicePlanName>
-                    <!-- function app region-->
-                    <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-regions for all valid values -->
+                    <appName>${functionAppName}</appName>
                     <region>${functionRegion}</region>
-                    <subscriptionId>${subscriptionID}</subscriptionId>
-
                     <appSettings>
                         <!-- Run Azure Function from package file by default -->
                         <property>
