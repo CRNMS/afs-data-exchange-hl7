@@ -28,6 +28,7 @@ import java.util.*
  */
 class Function {
     companion object {
+        /*
         const val BLOB_CREATED = "Microsoft.Storage.BlobCreated"
         const val UTF_BOM = "\uFEFF"
         const val STATUS_SUCCESS = "SUCCESS"
@@ -38,6 +39,7 @@ class Function {
         const val JURISDICTION_CODE_PATH = "OBX[@3.1='77968-6']-5.1"
         const val ALT_JURISDICTION_CODE_PATH = "OBX[@3.1='NOT116']-5.1"
         val gson: Gson = GsonBuilder().serializeNulls().create()
+        */
     }
     @FunctionName("orchestrator-poc")
     fun eventHubProcessor(
@@ -47,8 +49,9 @@ class Function {
                 consumerGroup = "%EventHubConsumerGroup%",
                 connection = "EventHubConnectionString") 
                 messages: List<String>?,
-        @BindingName("SystemPropertiesArray")eventHubMD:List<EventHubMetadata>,
-        context: ExecutionContext) {
+                @BindingName("SystemPropertiesArray")
+                eventHubMD:List<EventHubMetadata>, 
+                context: ExecutionContext) {
             /*
             Receive message and pass along to function
 
@@ -58,6 +61,7 @@ class Function {
             -          
             
              */
+        // Convert Message Object into HL7 Token
 
         val startTime = Date().toIsoString()
         // context.logger.info("message: --> " + message)
@@ -74,7 +78,7 @@ class Function {
         val azBlobProxy = AzureBlobProxy(ingestBlobConnStr, blobIngestContName)
 
         // Read Message
-        val messageInfo = getMessageInfo()
+        val messageInfo = getMessageInfo( message )
 
 
         // Retrieve Token
@@ -87,10 +91,12 @@ class Function {
 
     } // .eventHubProcess
 
-    private fun getMessageInfo(): {
-       
-        return True
-
+    private fun getMessageInfo( message : String): HL7Token {
+        val structuredMessage = gson.fromJson(
+            message, HL7Token::class.java
+        )
+        // Space for Logic - If needed.
+        return structuredMessage
     }
 
     private fun extractValue(msg: String, path: String): String  {
@@ -100,7 +106,9 @@ class Function {
     }
 
 
-    private fun prepareAndSend(messageContent: ArrayList<String>, messageInfo: DexMessageInfo, metadata: DexMetadata, summary: SummaryInfo, eventHubSender: EventHubSender, eventHubName: String, context: ExecutionContext) {
+    private fun prepareAndSend(messageContent: ArrayList<String>, messageInfo: DexMessageInfo, 
+    metadata: DexMetadata, summary: SummaryInfo, 
+    eventHubSender: EventHubSender, eventHubName: String, context: ExecutionContext) {
         val contentBase64 = Base64.getEncoder().encodeToString(messageContent.joinToString("\n").toByteArray())
         val msgEvent = DexEventPayload(contentBase64, messageInfo, metadata, summary)
         context.logger.info("Sending new Event to event hub Message: --> messageUUID: ${msgEvent.messageUUID}, messageIndex: ${msgEvent.metadata.provenance.messageIndex}, fileName: ${msgEvent.metadata.provenance.filePath}")
@@ -109,26 +117,6 @@ class Function {
         context.logger.info("full message: $jsonMessage")
         context.logger.info("Processed and Sent to event hub $eventHubName Message: --> messageUUID: ${msgEvent.messageUUID}, messageIndex: ${msgEvent.metadata.provenance.messageIndex}, fileName: ${msgEvent.metadata.provenance.filePath}")
         //println(msgEvent)
-    }
-
-    private fun validateMessageMetaData(metaDataMap: Map<String, String>, context: ExecutionContext):Boolean {
-        var isValid = true
-        //Check if required Metadata fields are present
-        val messageType = metaDataMap["message_type"]
-        val route = metaDataMap["route"]
-        val reportingJurisdiction = metaDataMap["reporting_jurisdiction"]
-        context.logger.info("Metadata Info: --> messageType: ${messageType}, route: ${route}, reportingJurisdiction: $reportingJurisdiction")
-
-        if (messageType.isNullOrEmpty()){
-            isValid = false
-        } else if (messageType == HL7MessageType.ELR.name){
-            if (route.isNullOrEmpty() || reportingJurisdiction.isNullOrEmpty()){
-                isValid = false
-            }
-        }
-        context.logger.info("isValid: --> $isValid")
-
-        return isValid
     }
 
 

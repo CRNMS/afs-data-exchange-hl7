@@ -13,4 +13,40 @@ data class Token(
         val JURISDICTION_CODE_PATH: String = "OBX[@3.1='77968-6']-5.1",
         @SerializedName("ALT_JURISDICTION_CODE_PATH")
         val ALT_JURISDICTION_CODE_PATH: String = "OBX[@3.1='NOT116']-5.1",
+        val PIPELINE_PROCESS: List<FunctionStep> = null,
+
+)
+/*
+The token has to answer the following questions:
+1. What am I looking at? File type?
+2. Where can I get it? Filename + Filetype = Ability to retrieve blob
+3. Now that I know what I am looking at, what are the steps to complete it?
+   For each step, what unique properties do I need to provide?
+   For each step, what unique hl7 properties do I need to provide?
+4. Are there any additional properties I need to know for this message?
+
+ */
+data class HL7Token(
+        @SerializedName("FILETYPE") val FILETYPE: String? = null,
+        @SerializedName("FILENAME") val FILENAME: String? = null,
+        @SerializedName("PIPELINE_PROCESS") val PIPELINE_PROCESS: List<FunctionStep> = null,
+        @SerializedName("GENERALPROPERTIES") val GENERALPROPERTIES: List<String, String> = null        
+)
+
+data class FunctionStep(
+        var function_name: String? = null,
+        var result: String,
+        var triggertopic: String,
+        var fnhl7properties: List<StepHL7Properties>,
+        var fnproperties: List<StepFnProperties>
+)
+
+data class StepHL7Properties(
+        var field: String,
+        var value: String
+)
+
+data class StepFnProperties(
+        var field: String,
+        var value: String
 )

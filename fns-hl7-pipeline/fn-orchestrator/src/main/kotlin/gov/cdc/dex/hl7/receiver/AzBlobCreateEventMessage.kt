@@ -11,7 +11,8 @@ data class AzBlobCreateEventMessage (
   @SerializedName("data"            ) var evHubData       : EvHubData,
   @SerializedName("dataVersion"     ) var dataVersion     : String,
   @SerializedName("metadataVersion" ) var metadataVersion : String,
-  @SerializedName("eventTime"       ) var eventTime       : String
+  @SerializedName("eventTime"       ) var eventTime       : String,
+  @SerializedName("Token"           ) var token           : HL7Token
 )
 
 data class EvHubData (
