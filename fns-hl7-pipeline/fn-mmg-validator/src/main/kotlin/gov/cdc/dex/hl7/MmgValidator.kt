@@ -66,20 +66,14 @@ class MmgValidator {
                         }
                     }
                     //Content checks
-                   if (!("OBR" == element.mappings.hl7v251.segmentType && 31 == element.mappings.hl7v251.fieldPosition)) {
-                        if (msgSegments.isDefined) {
-                            val msgValues = HL7StaticParser.getValue(hl7Message, element.getValuePath())
-                            if (msgValues.isDefined) {
-                                checkVocab(element, msgValues.get(), hl7Message, report)
-                                if (element.mappings.hl7v251.dataType in DATE_DATA_TYPES) {
-                                    this.checkDateContent(element, msgValues.get(), hl7Message, report)
-                                } else if (element.mappings.hl7v251.identifier in listOf(
-                                        MMWR_WEEK_CODE,
-                                        MMWR_WEEK_LEGACY_CODE
-                                    )
-                                ) {
-                                    this.checkMMWRWeek(element, msgValues.get(), hl7Message, report)
-                                }
+                    if (msgSegments.isDefined)  {
+                        val msgValues = HL7StaticParser.getValue(hl7Message, element.getValuePath())
+                        if (msgValues.isDefined) {
+                            checkVocab(element, msgValues.get(), hl7Message, report)
+                            if (element.mappings.hl7v251.dataType in DATE_DATA_TYPES) {
+                                this.checkDateContent(element, msgValues.get(), hl7Message, report)
+                            } else if (element.mappings.hl7v251.identifier in listOf(MMWR_WEEK_CODE, MMWR_WEEK_LEGACY_CODE)) {
+                                this.checkMMWRWeek(element, msgValues.get(), hl7Message, report)
                             }
                         }
                     }
@@ -216,7 +210,7 @@ class MmgValidator {
             }
         } else {
             val allSegs = msgValues.joinToString("\n") //join all segments to extract all Values.
-            val segValues = HL7StaticParser.getValue(hl7Message, element.getValuePath())
+            val segValues = HL7StaticParser.getValue(allSegs, element.getValuePath())
 //            val segValuesFlat = if (segValues.isDefined) segValues.get().flatten() else listOf()
             checkSingleGroupCardinality(hl7Message, minCardinality, maxCardinality, null, element, segValues, report)
 
